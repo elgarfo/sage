@@ -312,6 +312,18 @@ pub_install() {
   else pub_depends
   fi |
   priv_resolve_deps - |
+  {
+    fb=$(dd bs=1 count=1 2>/dev/null | od -t o1 -A n)
+    if [ -n "${force}" -a -z "${fb}" ]
+    then
+      cat /tmp/tar.lst
+    else
+      {
+        printf "\\${fb# }"
+        cat
+      }
+    fi
+  } |
   while read fox
   do
     priv_download "$fox"
@@ -574,6 +586,11 @@ do
 
     --nodeps)
       nodeps=1
+      shift
+    ;;
+
+    --force)
+      force=1
       shift
     ;;
 
